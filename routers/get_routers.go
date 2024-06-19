@@ -48,6 +48,9 @@ func GetRouters() *gin.Engine {
 		// 商品子路由
 		goods := routers.Group("/goods")
 		GoodsRouters(goods)
+		// 支付方式子路由
+		payMethod := routers.Group("/pay_method")
+		PayMethodRouters(payMethod)
 	})
 	return routers
 }
