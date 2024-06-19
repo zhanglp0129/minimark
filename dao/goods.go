@@ -17,7 +17,7 @@ func (ct *ChargeType) MarshalJSON() ([]byte, error) {
 	if *ct > 1 {
 		return nil, errors.New("不支持的计价方式")
 	}
-	return json.Marshal(string(*ct))
+	return json.Marshal(ct.String())
 }
 
 func (ct *ChargeType) String() string {

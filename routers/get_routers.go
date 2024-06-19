@@ -45,6 +45,9 @@ func GetRouters() *gin.Engine {
 		// 商品分类子路由
 		category := routers.Group("/category")
 		CategoryRouters(category)
+		// 商品子路由
+		goods := routers.Group("/goods")
+		GoodsRouters(goods)
 	})
 	return routers
 }

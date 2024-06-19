@@ -20,7 +20,7 @@ func CategoryList() ([]dao.Category, error) {
 func CategoryFind(id int) (dao.Category, error) {
 	var category dao.Category
 	db := dao.GetDB()
-	err := db.Take(&category, "id = ?", id).Error
+	err := db.Take(&category, id).Error
 	return category, err
 }
 

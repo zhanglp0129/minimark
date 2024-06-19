@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"minimark/config"
 	"sync"
 )
@@ -19,12 +20,17 @@ func GetDB() *gorm.DB {
 		cfg := config.GetConfig()
 		driver := cfg.Database.Driver
 		dsn := cfg.Database.DSN
+		log := logger.Default.LogMode(logger.Info)
 		var err error
 		switch driver {
 		case "mysql":
-			db, err = gorm.Open(mysql.Open(dsn))
+			db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+				Logger: log,
+			})
 		case "sqlserver":
-			db, err = gorm.Open(sqlserver.Open(dsn))
+			db, err = gorm.Open(sqlserver.Open(dsn), &gorm.Config{
+				Logger: log,
+			})
 		default:
 			err = errors.New("不支持的数据库：" + driver)
 		}
