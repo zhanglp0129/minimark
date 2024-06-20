@@ -18,6 +18,7 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*t = Time{parsed}
+	t.Time = t.In(time.Local)
 	return nil
 }
 
@@ -39,13 +40,13 @@ func (t *Time) Scan(value interface{}) error {
 	case time.Time:
 		*t = Time{Time: v}
 	case []byte:
-		parsed, err := time.Parse("2006-01-02 15:04:05", string(v))
+		parsed, err := time.ParseInLocation("2006-01-02 15:04:05", string(v), time.Local)
 		if err != nil {
 			return err
 		}
 		*t = Time{parsed}
 	case string:
-		parsed, err := time.Parse("2006-01-02 15:04:05", v)
+		parsed, err := time.ParseInLocation("2006-01-02 15:04:05", v, time.Local)
 		if err != nil {
 			return err
 		}
@@ -54,6 +55,19 @@ func (t *Time) Scan(value interface{}) error {
 		return fmt.Errorf("cannot scan type %T into MyTime", value)
 	}
 	return nil
+}
+
+func (t *Time) UnmarshalParam(src string) error {
+	parsed, err := time.ParseInLocation("2006-01-02 15:04:05", src, time.Local)
+	if err != nil {
+		return err
+	}
+	*t = Time{parsed}
+	return nil
+}
+
+func (t Time) String() string {
+	return t.Time.Format("2006-01-02 15:04:05")
 }
 
 type Order struct {

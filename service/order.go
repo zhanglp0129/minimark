@@ -94,16 +94,16 @@ func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, error) {
 		tx = tx.Where("pay_method_id = ?", *dto.PayMethodID)
 	}
 	if dto.MinPayTime != nil {
-		tx = tx.Where("pay_time >= ", *dto.MinPayTime)
+		tx = tx.Where("pay_time >= ?", *dto.MinPayTime)
 	}
 	if dto.MaxPayTime != nil {
-		tx = tx.Where("pay_time <= ", *dto.MaxPayTime)
+		tx = tx.Where("pay_time <= ?", *dto.MaxPayTime)
 	}
 	if dto.MinTotalPaid != nil {
-		tx = tx.Where("total_paid >= ", *dto.MinTotalPaid)
+		tx = tx.Where("total_paid >= ?", *dto.MinTotalPaid)
 	}
 	if dto.MaxTotalPaid != nil {
-		tx = tx.Where("total_paid >= ", *dto.MaxTotalPaid)
+		tx = tx.Where("total_paid >= ?", *dto.MaxTotalPaid)
 	}
 	err := tx.Find(&orders).Error
 
@@ -111,4 +111,11 @@ func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, error) {
 		return nil, err
 	}
 	return orders, nil
+}
+
+func OrderFind(id int) (dao.Order, error) {
+	db := dao.GetDB()
+	var order dao.Order
+	err := db.Preload("PayMethod").Preload("OrderGoods").Take(&order, id).Error
+	return order, err
 }
