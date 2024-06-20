@@ -36,3 +36,10 @@ type OrderPageDTO struct {
 	MinTotalPaid *decimal.Decimal `form:"minTotalPaid"`
 	MaxTotalPaid *decimal.Decimal `form:"maxTotalPaid"`
 }
+
+type OrderAddUpdateGoodsDTO struct {
+	GoodsID     int              `json:"goodsId"`
+	Quantity    decimal.Decimal  `json:"quantity"`
+	Price       *decimal.Decimal `json:"price"`
+	ChangeStock *bool            `json:"changeStock"`
+}

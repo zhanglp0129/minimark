@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"minimark/dao"
@@ -123,5 +124,57 @@ func OrderFind(id int) (dao.Order, error) {
 func OrderUpdate(order *dao.Order) error {
 	db := dao.GetDB()
 	err := db.Save(&order).Error
+	return err
+}
+
+func OrderAddGoods(id int, dto []pojo.OrderAddUpdateGoodsDTO) error {
+	db := dao.GetDB()
+
+	err := db.Transaction(func(tx *gorm.DB) error {
+		for i := range dto {
+			// 先查找是否有记录
+			orderGoods := dao.OrderGoods{GoodsID: dto[i].GoodsID, OrderID: id}
+			addQuantity := dto[i].Quantity
+			goods := dao.Goods{ID: orderGoods.GoodsID}
+			if err := tx.Take(&orderGoods).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+				// 没有找到记录，添加记录
+				if dto[i].Price == nil {
+					// 从数据库查询单价
+					if err := db.Select("price").Take(&goods).Error; err != nil {
+						return err
+					}
+					orderGoods.Price = goods.Price
+				} else {
+					// 直接赋值
+					orderGoods.Price = *dto[i].Price
+				}
+				orderGoods.Quantity = dto[i].Quantity
+			} else if err == nil {
+				// 找到了记录，添加数量，但不会修改单价
+				orderGoods.Quantity = dto[i].Quantity.Add(addQuantity)
+			} else {
+				return err
+			}
+			err := tx.Save(&orderGoods).Error
+			if err != nil {
+				return err
+			}
+
+			// 修改库存
+			if dto[i].ChangeStock == nil || *dto[i].ChangeStock {
+				// 先查到当前库存
+				err := db.Select("stock").Take(&goods).Error
+				if err != nil {
+					return err
+				}
+
+				// 再减去购买数量
+				if err := tx.Model(&goods).Update("stock", goods.Stock.Sub(addQuantity)).Error; err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	})
 	return err
 }

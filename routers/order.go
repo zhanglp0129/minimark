@@ -13,6 +13,7 @@ func OrderRouters(r *gin.RouterGroup) {
 	r.GET("/", OrderPage)
 	r.GET("/:id", OrderFind)
 	r.PUT("/:id", OrderUpdate)
+	r.POST("/add-goods/:id", OrderAddGoods)
 }
 
 func OrderCreate(c *gin.Context) {
@@ -87,6 +88,34 @@ func OrderUpdate(c *gin.Context) {
 	order.ID = id
 
 	err = service.OrderUpdate(&order)
+	if err != nil {
+		c.String(400, err.Error())
+		c.Abort()
+		return
+	}
+	c.String(200, "")
+}
+
+func OrderAddGoods(c *gin.Context) {
+	// 获取订单id
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.String(400, err.Error())
+		c.Abort()
+		return
+	}
+
+	// 获取修改后的信息
+	var dto []pojo.OrderAddUpdateGoodsDTO
+	err = c.ShouldBindJSON(&dto)
+	if err != nil {
+		c.String(400, err.Error())
+		c.Abort()
+		return
+	}
+
+	// 执行service
+	err = service.OrderAddGoods(id, dto)
 	if err != nil {
 		c.String(400, err.Error())
 		c.Abort()
