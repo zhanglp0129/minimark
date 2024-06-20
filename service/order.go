@@ -119,3 +119,9 @@ func OrderFind(id int) (dao.Order, error) {
 	err := db.Preload("PayMethod").Preload("OrderGoods").Take(&order, id).Error
 	return order, err
 }
+
+func OrderUpdate(order *dao.Order) error {
+	db := dao.GetDB()
+	err := db.Save(&order).Error
+	return err
+}
