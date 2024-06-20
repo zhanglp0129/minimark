@@ -25,7 +25,7 @@ func OrderCreate(dto *pojo.OrderCreateDTO) error {
 				return err
 			}
 		}
-		totalPaid = totalPaid.Add(*dto.Goods[i].Price)
+		totalPaid = totalPaid.Add(dto.Goods[i].Price.Mul(dto.Goods[i].Quantity))
 	}
 	if dto.TotalPaid == nil {
 		dto.TotalPaid = new(decimal.Decimal)
@@ -62,13 +62,13 @@ func OrderCreate(dto *pojo.OrderCreateDTO) error {
 			orderGoods[i].OrderID = order.ID
 			if *dto.ChangeStock {
 				// 先查到当前库存
-				var stock decimal.Decimal
-				if err := db.Model(&dao.Goods{}).Select("stock").Take(&stock).Error; err != nil {
+				goods := dao.Goods{ID: orderGoods[i].GoodsID}
+				if err := db.Select("stock").Take(&goods).Error; err != nil {
 					return err
 				}
 
 				// 再减去购买数量
-				if err := tx.Model(&dao.Goods{ID: orderGoods[i].GoodsID}).Update("stock", stock.Sub(orderGoods[i].Quantity)).Error; err != nil {
+				if err := tx.Model(&dao.Goods{ID: orderGoods[i].GoodsID}).Update("stock", goods.Stock.Sub(orderGoods[i].Quantity)).Error; err != nil {
 					return err
 				}
 			}
@@ -80,4 +80,35 @@ func OrderCreate(dto *pojo.OrderCreateDTO) error {
 		return nil
 	})
 	return err
+}
+
+func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, error) {
+	db := dao.GetDB()
+	offset := (dto.PageNum - 1) * dto.PageSize
+
+	// 查询Order
+	var orders []dao.Order
+	tx := db.Preload("PayMethod").Preload("OrderGoods").Offset(offset).Limit(dto.PageSize)
+	// 查询条件
+	if dto.PayMethodID != nil {
+		tx = tx.Where("pay_method_id = ?", *dto.PayMethodID)
+	}
+	if dto.MinPayTime != nil {
+		tx = tx.Where("pay_time >= ", *dto.MinPayTime)
+	}
+	if dto.MaxPayTime != nil {
+		tx = tx.Where("pay_time <= ", *dto.MaxPayTime)
+	}
+	if dto.MinTotalPaid != nil {
+		tx = tx.Where("total_paid >= ", *dto.MinTotalPaid)
+	}
+	if dto.MaxTotalPaid != nil {
+		tx = tx.Where("total_paid >= ", *dto.MaxTotalPaid)
+	}
+	err := tx.Find(&orders).Error
+
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }

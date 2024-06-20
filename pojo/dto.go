@@ -26,3 +26,13 @@ type OrderCreateDTO struct {
 	ChangeStock *bool                     `form:"changeStock"`
 	Goods       []GoodsInOrderProcurement `form:"goods"`
 }
+
+type OrderPageDTO struct {
+	PageNum      int              `form:"pageNum"`
+	PageSize     int              `form:"pageSize"`
+	PayMethodID  *int             `form:"payMethodId"`
+	MinPayTime   *dao.Time        `form:"minPayTime"`
+	MaxPayTime   *dao.Time        `form:"maxPayTime"`
+	MinTotalPaid *decimal.Decimal `form:"minTotalPaid"`
+	MaxTotalPaid *decimal.Decimal `form:"maxTotalPaid"`
+}

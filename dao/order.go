@@ -40,13 +40,30 @@ func (t Time) Value() (driver.Value, error) {
 	return t.Time, nil
 }
 
-func (t *Time) Scan(v interface{}) error {
-	value, ok := v.(time.Time)
-	if ok {
-		*t = Time{Time: value}
+func (t *Time) Scan(value interface{}) error {
+	if value == nil {
+		*t = Time{Time: time.Time{}}
 		return nil
 	}
-	return fmt.Errorf("can not convert %v to timestamp", v)
+	switch v := value.(type) {
+	case time.Time:
+		*t = Time{Time: v}
+	case []byte:
+		parsed, err := time.Parse("2006-01-02 15:04:05", string(v))
+		if err != nil {
+			return err
+		}
+		*t = Time{parsed}
+	case string:
+		parsed, err := time.Parse("2006-01-02 15:04:05", v)
+		if err != nil {
+			return err
+		}
+		*t = Time{parsed}
+	default:
+		return fmt.Errorf("cannot scan type %T into MyTime", value)
+	}
+	return nil
 }
 
 type Order struct {
@@ -56,6 +73,7 @@ type Order struct {
 	PayMethod   *PayMethod      `json:"payMethod,omitempty"`
 	PayTime     Time            `gorm:"not null" json:"payTime"`
 	Goods       []Goods         `gorm:"many2many:order_goods" json:"-"`
+	OrderGoods  []OrderGoods    `json:"goods"`
 }
 
 type OrderGoods struct {

@@ -51,5 +51,5 @@ type Goods struct {
 	Category   *Category       `json:"category,omitempty"`
 	Price      decimal.Decimal `gorm:"type:decimal(10,2);not null;check:price>=0" json:"price"`
 	ChargeType ChargeType      `gorm:"not null;check:charge_type<=1" json:"chargeType"`
-	Stock      decimal.Decimal `gorm:"type:decimal(10,2);not null;check:stock>=0" json:"stock"`
+	Stock      decimal.Decimal `gorm:"type:decimal(10,3);not null;check:stock>=0" json:"stock"`
 }
