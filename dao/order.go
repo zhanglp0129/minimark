@@ -4,7 +4,6 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"github.com/shopspring/decimal"
-	"strings"
 	"time"
 )
 
@@ -14,29 +13,20 @@ type Time struct {
 }
 
 func (t *Time) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		return nil
+	parsed, err := time.Parse(`"2006-01-02 15:04:05"`, string(data))
+	if err != nil {
+		return err
 	}
-	var err error
-	//前端接收的时间字符串
-	str := string(data)
-	//去除接收的str收尾多余的"
-	timeStr := strings.Trim(str, "\"")
-	t1, err := time.Parse("2006-01-02 15:04:05", timeStr)
-	*t = Time{t1}
-	return err
+	*t = Time{parsed}
+	return nil
 }
 
 func (t Time) MarshalJSON() ([]byte, error) {
-	output := fmt.Sprintf("\"%s\"", t.Format("2006-01-02 15:04:05"))
-	return []byte(output), nil
+	formatted := fmt.Sprintf("\"%s\"", t.Format("2006-01-02 15:04:05"))
+	return []byte(formatted), nil
 }
 
 func (t Time) Value() (driver.Value, error) {
-	var zeroTime time.Time
-	if t.Time.UnixNano() == zeroTime.UnixNano() {
-		return nil, nil
-	}
 	return t.Time, nil
 }
 

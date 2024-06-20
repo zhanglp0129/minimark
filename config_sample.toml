@@ -12,7 +12,7 @@ driver = "mysql"
 #
 # 对于sqlserver，"sqlserver://username:password@host/instance?param1=value&param2=value"
 # 具体详情参考：https://github.com/denisenkom/go-mssqldb?tab=readme-ov-file#connection-parameters-and-dsn
-dsn = "admin:12345678@tcp(127.0.0.1:3306)/minimark"
+dsn = "admin:12345678@tcp(127.0.0.1:3306)/minimark?charset=utf8mb4&parseTime=True&loc=Local"
 
 # 服务器相关配置
 [server]
