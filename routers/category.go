@@ -24,6 +24,7 @@ func CategoryCreate(c *gin.Context) {
 		c.Abort()
 		return
 	}
+	
 	err = service.CategoryCreate(&category)
 	if err != nil {
 		c.String(400, err.Error())

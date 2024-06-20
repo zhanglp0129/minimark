@@ -51,6 +51,9 @@ func GetRouters() *gin.Engine {
 		// 支付方式子路由
 		payMethod := routers.Group("/pay_method")
 		PayMethodRouters(payMethod)
+		// 订单字路由
+		order := routers.Group("/order")
+		OrderRouters(order)
 	})
 	return routers
 }

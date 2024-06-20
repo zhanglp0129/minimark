@@ -27,12 +27,12 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 	return err
 }
 
-func (t *Time) MarshalJSON() ([]byte, error) {
+func (t Time) MarshalJSON() ([]byte, error) {
 	output := fmt.Sprintf("\"%s\"", t.Format("2006-01-02 15:04:05"))
 	return []byte(output), nil
 }
 
-func (t *Time) Value() (driver.Value, error) {
+func (t Time) Value() (driver.Value, error) {
 	var zeroTime time.Time
 	if t.Time.UnixNano() == zeroTime.UnixNano() {
 		return nil, nil
