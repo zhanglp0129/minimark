@@ -15,6 +15,7 @@ func OrderRouters(r *gin.RouterGroup) {
 	r.PUT("/:id", OrderUpdate)
 	r.POST("/add-goods/:id", OrderAddGoods)
 	r.PATCH("/update-goods/:id", OrderUpdateGoods)
+	r.DELETE("/", OrderDelete)
 }
 
 func OrderCreate(c *gin.Context) {
@@ -145,6 +146,32 @@ func OrderUpdateGoods(c *gin.Context) {
 
 	// 执行service
 	err = service.OrderUpdateGoods(id, dto)
+	if err != nil {
+		c.String(400, err.Error())
+		c.Abort()
+		return
+	}
+	c.String(200, "")
+}
+
+func OrderDelete(c *gin.Context) {
+	type DTO struct {
+		ID          int   `form:"id"`
+		ChangeStock *bool `form:"change_stock"`
+	}
+	dto := DTO{}
+	err := c.ShouldBindQuery(&dto)
+	if err != nil {
+		c.String(400, err.Error())
+		c.Abort()
+		return
+	}
+	if dto.ChangeStock == nil {
+		dto.ChangeStock = new(bool)
+		*dto.ChangeStock = true
+	}
+
+	err = service.OrderDelete(dto.ID, *dto.ChangeStock)
 	if err != nil {
 		c.String(400, err.Error())
 		c.Abort()

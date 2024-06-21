@@ -228,3 +228,42 @@ func OrderUpdateGoods(id int, dto []pojo.OrderAddUpdateGoodsDTO) error {
 	})
 	return err
 }
+
+func OrderDelete(id int, changeStock bool) error {
+	db := dao.GetDB()
+	err := db.Transaction(func(tx *gorm.DB) error {
+		// 先修改库存
+		if changeStock {
+			// 查到商品数量
+			var orderGoods []dao.OrderGoods
+			err := tx.Where("order_id = ?", id).Find(&orderGoods).Error
+			if err != nil {
+				return err
+			}
+
+			for i := range orderGoods {
+				// 修改库存
+				err := utils.ChangeStock(tx, orderGoods[i].GoodsID, orderGoods[i].Quantity)
+				if err != nil {
+					return err
+				}
+			}
+		}
+
+		// 删除连接表数据
+		err := tx.Where("order_id = ?", id).Delete(&dao.OrderGoods{}).Error
+		if err != nil {
+			return err
+		}
+
+		// 删除订单
+		err = tx.Delete(&dao.Order{ID: id}).Error
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	return err
+}
