@@ -3,6 +3,7 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
+	"minimark"
 	"minimark/utils"
 	"sync"
 )
@@ -37,6 +38,14 @@ func LoginAuthorization(c *gin.Context) {
 func GetRouters() *gin.Engine {
 	onceRouters.Do(func() {
 		routers = gin.Default()
+		// 加载前端资源
+		routers.GET("/", func(c *gin.Context) {
+			c.Writer.WriteHeader(200)
+			c.Header("Content-Type", "text/html; charset=utf-8")
+			b, _ := minimark.WebFS.ReadFile("index.html")
+			_, _ = c.Writer.Write(b)
+			c.Writer.Flush()
+		})
 
 		// api子路由
 		api := routers.Group("/api")

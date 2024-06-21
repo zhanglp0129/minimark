@@ -6,7 +6,7 @@ import axios from 'axios';
 import {useTokenStore} from '@/stores/token.js'
 import router from '@/router/index.js'
 //定义一个变量,记录公共的前缀  ,  baseURL
-const baseURL = '/api';
+const baseURL = 'http://localhost:5173/api';
 const instance = axios.create({baseURL})
 
 // 添加请求拦截器
