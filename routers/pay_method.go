@@ -8,11 +8,11 @@ import (
 )
 
 func PayMethodRouters(r *gin.RouterGroup) {
-	r.POST("/", PayMethodCreate)
-	r.GET("/", PayMethodList)
+	r.POST("", PayMethodCreate)
+	r.GET("", PayMethodList)
 	r.GET("/:id", PayMethodFind)
 	r.PUT("/:id", PayMethodUpdate)
-	r.DELETE("/", PayMethodDelete)
+	r.DELETE("", PayMethodDelete)
 }
 
 // PayMethodCreate 创建商品分类

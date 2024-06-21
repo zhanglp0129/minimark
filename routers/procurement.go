@@ -9,13 +9,13 @@ import (
 )
 
 func ProcurementRouters(r *gin.RouterGroup) {
-	r.POST("/", ProcurementCreate)
-	r.GET("/", ProcurementPage)
+	r.POST("", ProcurementCreate)
+	r.GET("", ProcurementPage)
 	r.GET("/:id", ProcurementFind)
 	r.PUT("/:id", ProcurementUpdate)
 	r.POST("/add-goods/:id", ProcurementAddGoods)
 	r.PATCH("/update-goods/:id", ProcurementUpdateGoods)
-	r.DELETE("/", ProcurementDelete)
+	r.DELETE("", ProcurementDelete)
 }
 
 func ProcurementCreate(c *gin.Context) {

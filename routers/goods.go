@@ -10,11 +10,11 @@ import (
 )
 
 func GoodsRouters(r *gin.RouterGroup) {
-	r.POST("/", GoodsCreate)
-	r.GET("/", GoodsPage)
+	r.POST("", GoodsCreate)
+	r.GET("", GoodsPage)
 	r.GET("/:ids", GoodsFind)
 	r.PUT("/:id", GoodsUpdate)
-	r.DELETE("/", GoodsDelete)
+	r.DELETE("", GoodsDelete)
 }
 
 // GoodsCreate 新增商品

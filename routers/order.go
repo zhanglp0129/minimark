@@ -9,13 +9,13 @@ import (
 )
 
 func OrderRouters(r *gin.RouterGroup) {
-	r.POST("/", OrderCreate)
-	r.GET("/", OrderPage)
+	r.POST("", OrderCreate)
+	r.GET("", OrderPage)
 	r.GET("/:id", OrderFind)
 	r.PUT("/:id", OrderUpdate)
 	r.POST("/add-goods/:id", OrderAddGoods)
 	r.PATCH("/update-goods/:id", OrderUpdateGoods)
-	r.DELETE("/", OrderDelete)
+	r.DELETE("", OrderDelete)
 }
 
 func OrderCreate(c *gin.Context) {

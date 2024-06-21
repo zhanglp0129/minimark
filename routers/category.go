@@ -8,11 +8,11 @@ import (
 )
 
 func CategoryRouters(r *gin.RouterGroup) {
-	r.POST("/", CategoryCreate)
-	r.GET("/", CategoryList)
+	r.POST("", CategoryCreate)
+	r.GET("", CategoryList)
 	r.GET("/:id", CategoryFind)
 	r.PUT("/:id", CategoryUpdate)
-	r.DELETE("/", CategoryDelete)
+	r.DELETE("", CategoryDelete)
 }
 
 // CategoryCreate 创建商品分类
@@ -24,7 +24,7 @@ func CategoryCreate(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	
+
 	err = service.CategoryCreate(&category)
 	if err != nil {
 		c.String(400, err.Error())

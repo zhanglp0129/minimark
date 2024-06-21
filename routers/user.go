@@ -14,7 +14,8 @@ func UserLogin(c *gin.Context) {
 	password := c.PostForm("password")
 	token, err := service.UserLogin(username, password)
 	if err != nil {
-		c.AbortWithError(400, err)
+		c.String(400, err.Error())
+		c.Abort()
 		return
 	}
 	c.JSON(200, gin.H{"token": token})
