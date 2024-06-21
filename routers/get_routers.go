@@ -37,25 +37,27 @@ func LoginAuthorization(c *gin.Context) {
 func GetRouters() *gin.Engine {
 	onceRouters.Do(func() {
 		routers = gin.Default()
-		routers.Use(LoginAuthorization)
 
+		// api子路由
+		api := routers.Group("/api")
+		api.Use(LoginAuthorization)
 		// 用户子路由
-		user := routers.Group("/user")
+		user := api.Group("/user")
 		UserRouters(user)
 		// 商品分类子路由
-		category := routers.Group("/category")
+		category := api.Group("/category")
 		CategoryRouters(category)
 		// 商品子路由
-		goods := routers.Group("/goods")
+		goods := api.Group("/goods")
 		GoodsRouters(goods)
 		// 支付方式子路由
-		payMethod := routers.Group("/pay_method")
+		payMethod := api.Group("/pay_method")
 		PayMethodRouters(payMethod)
 		// 订单子路由
-		order := routers.Group("/order")
+		order := api.Group("/order")
 		OrderRouters(order)
 		// 进货子路由
-		procurement := routers.Group("/procurement")
+		procurement := api.Group("/procurement")
 		ProcurementRouters(procurement)
 	})
 	return routers
