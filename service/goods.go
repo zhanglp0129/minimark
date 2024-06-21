@@ -16,7 +16,7 @@ func GoodsPage(dto pojo.GoodsPageDTO) ([]dao.Goods, error) {
 	db := dao.GetDB()
 	offset := (dto.PageNum - 1) * dto.PageSize
 	var goods []dao.Goods
-	tx := db.Preload("Category").Offset(offset).Limit(dto.PageSize)
+	tx := db.Preload("Category").Order("id desc").Offset(offset).Limit(dto.PageSize)
 	if dto.GoodsName != nil {
 		tx = tx.Where("name like ?", "%"+*dto.GoodsName+"%")
 	}

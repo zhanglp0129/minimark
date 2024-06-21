@@ -85,7 +85,7 @@ func ProcurementPage(dto *pojo.ProcurementPageDTO) ([]dao.Procurement, error) {
 
 	// 查询Procurement
 	var procurements []dao.Procurement
-	tx := db.Preload("PayMethod").Preload("ProcurementGoods").Offset(offset).Limit(dto.PageSize)
+	tx := db.Preload("PayMethod").Preload("ProcurementGoods").Order("id").Offset(offset).Limit(dto.PageSize)
 	// 查询条件
 	if dto.PayMethodID != nil {
 		tx = tx.Where("pay_method_id = ?", *dto.PayMethodID)

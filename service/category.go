@@ -14,7 +14,7 @@ func CategoryCreate(category *dao.Category) error {
 func CategoryList() ([]dao.Category, error) {
 	var categories []dao.Category
 	db := dao.GetDB()
-	err := db.Find(&categories).Error
+	err := db.Order("id desc").Find(&categories).Error
 	return categories, err
 }
 

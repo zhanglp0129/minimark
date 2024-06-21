@@ -85,7 +85,7 @@ func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, error) {
 
 	// 查询Order
 	var orders []dao.Order
-	tx := db.Preload("PayMethod").Preload("OrderGoods").Offset(offset).Limit(dto.PageSize)
+	tx := db.Preload("PayMethod").Preload("OrderGoods").Order("id desc").Offset(offset).Limit(dto.PageSize)
 	// 查询条件
 	if dto.PayMethodID != nil {
 		tx = tx.Where("pay_method_id = ?", *dto.PayMethodID)

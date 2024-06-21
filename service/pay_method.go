@@ -14,7 +14,7 @@ func PayMethodCreate(payMethod *dao.PayMethod) error {
 func PayMethodList() ([]dao.PayMethod, error) {
 	var payMethod []dao.PayMethod
 	db := dao.GetDB()
-	err := db.Find(&payMethod).Error
+	err := db.Order("id desc").Find(&payMethod).Error
 	return payMethod, err
 }
 
