@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"minimark/dao"
 	"minimark/pojo"
+	"minimark/utils"
 	"time"
 )
 
@@ -62,14 +63,9 @@ func OrderCreate(dto *pojo.OrderCreateDTO) error {
 			// 添加订单id
 			orderGoods[i].OrderID = order.ID
 			if *dto.ChangeStock {
-				// 先查到当前库存
-				goods := dao.Goods{ID: orderGoods[i].GoodsID}
-				if err := db.Select("stock").Take(&goods).Error; err != nil {
-					return err
-				}
-
-				// 再减去购买数量
-				if err := tx.Model(&dao.Goods{ID: orderGoods[i].GoodsID}).Update("stock", goods.Stock.Sub(orderGoods[i].Quantity)).Error; err != nil {
+				// 修改库存
+				err := utils.ChangeStock(tx, orderGoods[i].GoodsID, decimal.Zero.Sub(orderGoods[i].Quantity))
+				if err != nil {
 					return err
 				}
 			}
@@ -151,7 +147,7 @@ func OrderAddGoods(id int, dto []pojo.OrderAddUpdateGoodsDTO) error {
 				orderGoods.Quantity = dto[i].Quantity
 			} else if err == nil {
 				// 找到了记录，添加数量，但不会修改单价
-				orderGoods.Quantity = dto[i].Quantity.Add(addQuantity)
+				orderGoods.Quantity = orderGoods.Quantity.Add(addQuantity)
 			} else {
 				return err
 			}
@@ -162,14 +158,68 @@ func OrderAddGoods(id int, dto []pojo.OrderAddUpdateGoodsDTO) error {
 
 			// 修改库存
 			if dto[i].ChangeStock == nil || *dto[i].ChangeStock {
-				// 先查到当前库存
-				err := db.Select("stock").Take(&goods).Error
+				err = utils.ChangeStock(tx, dto[i].GoodsID, decimal.Zero.Sub(addQuantity))
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+	})
+	return err
+}
+
+func OrderUpdateGoods(id int, dto []pojo.OrderAddUpdateGoodsDTO) error {
+	db := dao.GetDB()
+
+	err := db.Transaction(func(tx *gorm.DB) error {
+		for i := range dto {
+			orderGoods := dao.OrderGoods{GoodsID: dto[i].GoodsID, OrderID: id}
+			// 先查询原本的数量
+			err := tx.Take(&orderGoods).Error
+			if err != nil {
+				return err
+			}
+			addQuantity := dto[i].Quantity.Sub(orderGoods.Quantity)
+
+			// 判断是否删除订单中的商品
+			if dto[i].Quantity.Equal(decimal.Zero) {
+				err := tx.Delete(&orderGoods).Error
 				if err != nil {
 					return err
 				}
 
-				// 再减去购买数量
-				if err := tx.Model(&goods).Update("stock", goods.Stock.Sub(addQuantity)).Error; err != nil {
+				// 修改库存
+				if dto[i].ChangeStock == nil || *dto[i].ChangeStock {
+					err = utils.ChangeStock(tx, dto[i].GoodsID, decimal.Zero.Sub(addQuantity))
+					if err != nil {
+						return err
+					}
+				}
+				continue
+			}
+
+			goods := dao.Goods{ID: orderGoods.GoodsID}
+			// 修改数据
+			orderGoods.Quantity = dto[i].Quantity
+			if dto[i].Price == nil {
+				err := tx.Select("price").Take(&goods).Error
+				if err != nil {
+					return err
+				}
+				orderGoods.Price = goods.Price
+			} else {
+				orderGoods.Price = *dto[i].Price
+			}
+			err = tx.Save(&orderGoods).Error
+			if err != nil {
+				return err
+			}
+
+			// 修改库存
+			if dto[i].ChangeStock == nil || *dto[i].ChangeStock {
+				err := utils.ChangeStock(tx, goods.ID, decimal.Zero.Sub(addQuantity))
+				if err != nil {
 					return err
 				}
 			}
