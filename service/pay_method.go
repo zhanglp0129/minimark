@@ -1,6 +1,9 @@
 package service
 
-import "minimark/dao"
+import (
+	"gorm.io/gorm"
+	"minimark/dao"
+)
 
 func PayMethodCreate(payMethod *dao.PayMethod) error {
 	db := dao.GetDB()
@@ -30,6 +33,24 @@ func PayMethodUpdate(payMethod *dao.PayMethod) error {
 
 func PayMethodDelete(id int) error {
 	db := dao.GetDB()
-	err := db.Delete(&dao.PayMethod{}, id).Error
+	err := db.Transaction(func(tx *gorm.DB) error {
+		// 先将订单和进货的支付方式置为null
+		err := tx.Model(&dao.Order{}).Where("pay_method_id = ?", id).Update("pay_method_id", nil).Error
+		if err != nil {
+			return err
+		}
+		err = tx.Model(&dao.Procurement{}).Where("pay_method_id = ?", id).Update("pay_method_id", nil).Error
+		if err != nil {
+			return err
+		}
+
+		// 再删除支付方式
+		err = tx.Delete(&dao.PayMethod{ID: id}).Error
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
 	return err
 }
