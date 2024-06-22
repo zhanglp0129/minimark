@@ -12,19 +12,33 @@ func GoodsCreate(goods *dao.Goods) error {
 	return err
 }
 
-func GoodsPage(dto pojo.GoodsPageDTO) ([]dao.Goods, error) {
+func GoodsPage(dto pojo.GoodsPageDTO) ([]dao.Goods, int64, error) {
 	db := dao.GetDB()
-	offset := (dto.PageNum - 1) * dto.PageSize
 	var goods []dao.Goods
-	tx := db.Preload("Category").Order("id desc").Offset(offset).Limit(dto.PageSize)
+	// 获取查询条件
+	tx := db.Model(&dao.Goods{})
 	if dto.GoodsName != nil {
 		tx = tx.Where("name like ?", "%"+*dto.GoodsName+"%")
 	}
 	if dto.CategoryID != nil {
 		tx = tx.Where("category_id = ?", *dto.CategoryID)
 	}
-	err := tx.Find(&goods).Error
-	return goods, err
+	// 获取总结果数
+	var total int64
+	err := tx.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 正式分页查询
+	offset := (dto.PageNum - 1) * dto.PageSize
+	tx = tx.Preload("Category").Order("id desc").Offset(offset).Limit(dto.PageSize)
+	err = tx.Find(&goods).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return goods, total, err
 }
 
 func GoodsFind(ids []int) ([]dao.Goods, error) {
