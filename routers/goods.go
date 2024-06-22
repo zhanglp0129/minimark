@@ -44,13 +44,16 @@ func GoodsPage(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	goods, err := service.GoodsPage(goodsPageDTO)
+	goods, total, err := service.GoodsPage(goodsPageDTO)
 	if err != nil {
 		c.String(400, err.Error())
 		c.Abort()
 		return
 	}
-	c.JSON(200, goods)
+	c.JSON(200, gin.H{
+		"items": goods,
+		"total": total,
+	})
 }
 
 // GoodsFind 根据id查询商品
