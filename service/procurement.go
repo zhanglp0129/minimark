@@ -79,13 +79,10 @@ func ProcurementCreate(dto *pojo.ProcurementCreateDTO) error {
 	return err
 }
 
-func ProcurementPage(dto *pojo.ProcurementPageDTO) ([]dao.Procurement, error) {
+func ProcurementPage(dto *pojo.ProcurementPageDTO) ([]dao.Procurement, int64, error) {
 	db := dao.GetDB()
-	offset := (dto.PageNum - 1) * dto.PageSize
 
-	// 查询Procurement
-	var procurements []dao.Procurement
-	tx := db.Preload("PayMethod").Preload("ProcurementGoods").Order("id").Offset(offset).Limit(dto.PageSize)
+	tx := db.Model(&dao.Procurement{})
 	// 查询条件
 	if dto.PayMethodID != nil {
 		tx = tx.Where("pay_method_id = ?", *dto.PayMethodID)
@@ -108,12 +105,20 @@ func ProcurementPage(dto *pojo.ProcurementPageDTO) ([]dao.Procurement, error) {
 	if dto.MaxTotalPaid != nil {
 		tx = tx.Where("total_paid <= ?", *dto.MaxTotalPaid)
 	}
-	err := tx.Find(&procurements).Error
 
+	var total int64
+	err := tx.Count(&total).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return procurements, nil
+
+	var procurements []dao.Procurement
+	offset := (dto.PageNum - 1) * dto.PageSize
+	err = tx.Preload("PayMethod").Preload("ProcurementGoods").Order("id").Offset(offset).Limit(dto.PageSize).Find(&procurements).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return procurements, total, nil
 }
 
 func ProcurementFind(id int) (dao.Procurement, error) {

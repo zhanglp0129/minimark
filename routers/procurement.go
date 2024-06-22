@@ -45,13 +45,16 @@ func ProcurementPage(c *gin.Context) {
 		return
 	}
 
-	procurements, err := service.ProcurementPage(&dto)
+	procurements, total, err := service.ProcurementPage(&dto)
 	if err != nil {
 		c.String(400, err.Error())
 		c.Abort()
 		return
 	}
-	c.JSON(200, procurements)
+	c.JSON(200, gin.H{
+		"items": procurements,
+		"total": total,
+	})
 }
 
 func ProcurementFind(c *gin.Context) {
