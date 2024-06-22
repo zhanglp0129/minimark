@@ -23,7 +23,7 @@ func (ct *ChargeType) MarshalJSON() ([]byte, error) {
 func (ct *ChargeType) String() string {
 	switch *ct {
 	case ChargeByNumber:
-		return "按个数收费"
+		return "按个数计价"
 	case ChargeByWeight:
 		return "散装称重"
 	}
@@ -33,10 +33,10 @@ func (ct *ChargeType) String() string {
 func (ct *ChargeType) UnmarshalJSON(jsonBytes []byte) error {
 	str := string(jsonBytes)
 	switch str {
-	case "\"按个数收费\"":
-		*ct = 0
+	case "\"按个数计价\"":
+		*ct = ChargeByNumber
 	case "\"散装称重\"":
-		*ct = 1
+		*ct = ChargeByWeight
 	default:
 		return errors.New("不支持的计价方式")
 	}
