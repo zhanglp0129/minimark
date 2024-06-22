@@ -45,13 +45,16 @@ func OrderPage(c *gin.Context) {
 		return
 	}
 
-	orders, err := service.OrderPage(&dto)
+	orders, total, err := service.OrderPage(&dto)
 	if err != nil {
 		c.String(400, err.Error())
 		c.Abort()
 		return
 	}
-	c.JSON(200, orders)
+	c.JSON(200, gin.H{
+		"items": orders,
+		"total": total,
+	})
 }
 
 func OrderFind(c *gin.Context) {

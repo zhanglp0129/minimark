@@ -79,13 +79,10 @@ func OrderCreate(dto *pojo.OrderCreateDTO) error {
 	return err
 }
 
-func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, error) {
+func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, int64, error) {
 	db := dao.GetDB()
-	offset := (dto.PageNum - 1) * dto.PageSize
 
-	// 查询Order
-	var orders []dao.Order
-	tx := db.Preload("PayMethod").Preload("OrderGoods").Order("id desc").Offset(offset).Limit(dto.PageSize)
+	tx := db.Model(&dao.Order{})
 	// 查询条件
 	if dto.PayMethodID != nil {
 		tx = tx.Where("pay_method_id = ?", *dto.PayMethodID)
@@ -102,12 +99,21 @@ func OrderPage(dto *pojo.OrderPageDTO) ([]dao.Order, error) {
 	if dto.MaxTotalPaid != nil {
 		tx = tx.Where("total_paid >= ?", *dto.MaxTotalPaid)
 	}
-	err := tx.Find(&orders).Error
 
+	// 获取总记录数
+	var total int64
+	err := tx.Count(&total).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return orders, nil
+
+	var orders []dao.Order
+	offset := (dto.PageNum - 1) * dto.PageSize
+	err = tx.Preload("PayMethod").Preload("OrderGoods").Order("id desc").Offset(offset).Limit(dto.PageSize).Find(&orders).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return orders, total, nil
 }
 
 func OrderFind(id int) (dao.Order, error) {
