@@ -6,7 +6,7 @@
   <el-container class="layout-container">
     <!--左侧菜单-->
     <el-aside width="200px">
-      <el-menu active-text-color="#ffd04b" background-color="#232323"  text-color="#fff" router>
+      <el-menu active-text-color="#ffd04b" background-color="#00A2E8"  text-color="#fff" router>
         <el-menu-item index="/admin/dashboard">
           <el-icon>
             <Management />
@@ -35,13 +35,13 @@
           <el-icon>
             <Management />
           </el-icon>
-          <span>购买商品</span>
+          <span>购买记录</span>
         </el-menu-item>
         <el-menu-item index="/admin/procurement">
           <el-icon>
             <Management />
           </el-icon>
-          <span>进货商品</span>
+          <span>进货记录</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -66,7 +66,7 @@
   height: 100vh;
 
   .el-aside {
-    background-color: #232323;
+    background-color: #00A2E8;
 
     &__logo {
       height: 120px;

@@ -17,7 +17,7 @@ dsn = "admin:12345678@tcp(127.0.0.1:3306)/minimark?charset=utf8mb4&parseTime=Tru
 # 服务器相关配置
 [server]
 ip = "0.0.0.0"
-port = 8080
+port = 8092
 # 配置管理员用户，可以配置多个
 users = [
     {username="admin", password="12345678"},

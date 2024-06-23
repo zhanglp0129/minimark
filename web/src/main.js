@@ -7,7 +7,7 @@ import 'element-plus/dist/index.css'
 import router from '@/router'
 import {createPinia} from "pinia";
 import {createPersistedState} from 'pinia-persistedstate-plugin'
-import locale from 'element-plus/dist/locale/zh-cn.js'
+import locale from 'element-plus/es/locale/lang/zh-cn'
 
 const app = createApp(App)
 const pinia = createPinia()

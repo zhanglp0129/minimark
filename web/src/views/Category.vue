@@ -113,7 +113,7 @@ const deleteDialog = (row) => {
 
   <!--新增分类或更新分类弹窗-->
   <el-dialog v-model="dialogVisible" :title="title" width="30%">
-    <el-form :model="categoryModel" :rules="rules" label-width="100px" style="padding-right: 30px">
+    <el-form :model="categoryModel" :rules="rules" label-width="120px" style="padding-right: 30px">
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="categoryModel.name" minlength="1" maxlength="20"></el-input>
       </el-form-item>

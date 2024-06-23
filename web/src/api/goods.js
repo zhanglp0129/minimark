@@ -6,8 +6,15 @@ export const goodsCreateService = (data) => {
     return request.post('/goods', data)
 }
 
-export const goodsPageService = () => {
-    return request.get('/goods')
+export const goodsPageService = (data) => {
+    let uri = `/goods?page_num=${data.pageNum}&page_size=${data.pageSize}`
+    if(data.categoryId && data.categoryId !== '') {
+        uri += `&category_id=${data.categoryId}`
+    }
+    if(data.goodsName && data.goodsName !== '') {
+        uri += `&goods_name=${data.goodsName}`
+    }
+    return request.get(uri)
 }
 
 export const goodsFindService = (ids) => {
@@ -19,14 +26,15 @@ export const goodsFindService = (ids) => {
     for (const id of ids) {
         idsString += id+','
     }
-    idsString.substring(0, idsString.length - 1)
+    idsString = idsString.substring(0, idsString.length - 1)
     return request.get(`/goods/${idsString}`)
 }
 
 export const goodsUpdateService = (id, data) => {
+
     return request.put(`/goods/${id}`, data)
 }
 
 export const goodsDeleteService = (id) => {
-    return request.delete(`/goods/?id=${id}`)
+    return request.delete(`/goods?id=${id}`)
 }

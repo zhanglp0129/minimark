@@ -12,7 +12,7 @@ import {
 } from '@/api/pay-method.js'
 import {ElMessage, ElMessageBox} from "element-plus";
 
-// 获取商品分类信息
+// 获取支付方式信息
 const payMethods = ref([])
 const payMethodList = async () => {
   let result = await payMethodListService()
@@ -38,38 +38,38 @@ const rules = {
 // 对话框标题
 const title = ref('')
 
-// 打开新增分类的对话框
+// 打开新增支付方式的对话框
 const addDialog = () => {
   dialogVisible.value=true
   title.value='添加支付方式'
   payMethodModel.value.name = ''
 }
-// 新增商品分类
+// 新增商品支付方式
 const payMethodAdd = async () => {
   await payMethodCreateService(payMethodModel.value)
   ElMessage.success("添加成功")
-  // 刷新分类列表
+  // 刷新支付方式列表
   await payMethodList()
 }
 
-// 打开更新分类的对话框
+// 打开更新支付方式的对话框
 const updateDialog = (row) => {
   dialogVisible.value=true
-  title.value='更新分类'
+  title.value='更新支付方式'
   payMethodModel.value.name = row.name
   payMethodId.value = row.id
 }
-// 更新分类
+// 更新支付方式
 const payMethodUpdate = async () => {
   await payMethodUpdateService(payMethodId.value, payMethodModel.value)
   ElMessage.success("更新成功")
   await payMethodList()
 }
 
-// 打开删除分类的对话框
+// 打开删除支付方式的对话框
 const deleteDialog = (row) => {
   ElMessageBox.confirm(
-      '确认删除该分类吗？',
+      '确认删除该支付方式吗？',
       '温馨提示',
       {
         confirmButtonText: '确认',
@@ -110,17 +110,17 @@ const deleteDialog = (row) => {
     </el-table>
   </el-card>
 
-  <!--新增分类或更新分类弹窗-->
+  <!--新增支付方式或更新支付方式弹窗-->
   <el-dialog v-model="dialogVisible" :title="title" width="30%">
-    <el-form :model="payMethodModel" :rules="rules" label-width="100px" style="padding-right: 30px">
-      <el-form-item label="分类名称" prop="name">
+    <el-form :model="payMethodModel" :rules="rules" label-width="120px" style="padding-right: 30px">
+      <el-form-item label="支付方式名称" prop="name">
         <el-input v-model="payMethodModel.name" minlength="1" maxlength="20"></el-input>
       </el-form-item>
     </el-form>
     <template #footer>
         <span class="dialog-footer">
             <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="title==='添加分类'?payMethodAdd():payMethodUpdate(); dialogVisible = false"> 确认 </el-button>
+            <el-button type="primary" @click="title==='添加支付方式'?payMethodAdd():payMethodUpdate(); dialogVisible = false"> 确认 </el-button>
         </span>
     </template>
   </el-dialog>

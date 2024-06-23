@@ -15,7 +15,7 @@ const login = async () => {
   let result = await userLoginService(loginData.value)
   tokenStore.setToken(result.data.token)
   ElMessage.success('登录成功')
-  await router.push('/admin')
+  await router.push('/')
 }
 </script>
 
