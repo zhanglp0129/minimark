@@ -1,5 +1,27 @@
 <script type="javascript" setup>
+import {ElMessage, ElMessageBox} from "element-plus";
+import {useTokenStore} from "@/stores/token.js";
+import router from "@/router/index.js";
 
+const tokenStore = useTokenStore()
+const logout = () => {
+  ElMessageBox.confirm(
+      '确认退出登录吗？',
+      '温馨提示',
+      {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  )
+      .then(async () => {
+        // 清空pinia中的信息
+        tokenStore.removeToken()
+        // 跳转到登录界面
+        router.push('/login')
+        ElMessage.success('成功退出登录')
+      })
+}
 </script>
 
 <template>
@@ -8,39 +30,21 @@
     <el-aside width="200px">
       <el-menu active-text-color="#ffd04b" background-color="#00A2E8"  text-color="#fff" router>
         <el-menu-item index="/admin/dashboard">
-          <el-icon>
-            <Management />
-          </el-icon>
           <span>仪表盘</span>
         </el-menu-item>
         <el-menu-item index="/admin/category">
-          <el-icon>
-            <Management />
-          </el-icon>
           <span>商品分类</span>
         </el-menu-item>
         <el-menu-item index="/admin/goods">
-          <el-icon>
-            <Management />
-          </el-icon>
           <span>商品管理</span>
         </el-menu-item>
         <el-menu-item index="/admin/pay-method">
-          <el-icon>
-            <Management />
-          </el-icon>
           <span>支付方式</span>
         </el-menu-item>
         <el-menu-item index="/admin/order">
-          <el-icon>
-            <Management />
-          </el-icon>
           <span>购买记录</span>
         </el-menu-item>
         <el-menu-item index="/admin/procurement">
-          <el-icon>
-            <Management />
-          </el-icon>
           <span>进货记录</span>
         </el-menu-item>
       </el-menu>
@@ -50,6 +54,9 @@
       <!--头部区域-->
       <el-header>
         <div>小型超市商品管理系统</div>
+        <el-button type="primary" text @click="logout">
+          退出登录
+        </el-button>
       </el-header>
       <!-- 中间区域 -->
       <el-main>
