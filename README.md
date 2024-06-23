@@ -12,24 +12,32 @@ git clone git@github.com:zhanglp0129/minimark.git
 cd minimark
 ```
 
-3. 编译
+4. 打包前端代码
+```shell
+cd web
+npm i
+npm run build
+cd ..
+```
+
+5. 编译后端代码
 ```shell
 go build -o minimark minimark/cmd/main
 ```
 
-4. 创建数据库
+6. 创建数据库
 ```sql
--- 以下为sql语句，不是shell命令，请在mysql或sqlserver终端运行
+-- 以下为sql语句，请在mysql或sqlserver终端运行
 create database minimark;
 ```
 
-5. 编写配置文件
+7. 编写配置文件
 ```shell
 cp config_sample.toml config.toml
 vim config.toml
 ```
 
-6. 运行
+8. 运行
 ```shell
 ./minimark
 ```
