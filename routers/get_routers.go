@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"minimark"
@@ -43,8 +42,10 @@ func GetRouters() *gin.Engine {
 		// 提供嵌入的前端资源，并将访问前端资源的请求重定向到正确的未知
 		routers.StaticFS("/static", http.FS(minimark.WebFS))
 		routers.GET("/assets/:filename", func(c *gin.Context) {
-			fmt.Println(c.Request.URL.Path)
 			c.Redirect(301, "/static/web/dist/assets/"+c.Param("filename"))
+		})
+		routers.GET("/favicon.ico", func(c *gin.Context) {
+			c.Redirect(301, "/static/web/dist/favicon.ico")
 		})
 		// 将所有请求重定向到index.html，以便Vue处理路由
 		routers.NoRoute(func(c *gin.Context) {
