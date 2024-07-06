@@ -21,9 +21,14 @@ cd ..
 ```
 
 5. 编译后端代码
-```shell
-go build -o minimark minimark/cmd/main
-```
+    - Linux
+    ```shell
+    go build -o minimark minimark/cmd/main
+    ```
+    - Windows
+    ```shell
+    go build -o minimark.exe minimark/cmd/main
+    ```
 
 6. 创建数据库
 ```sql
@@ -32,12 +37,28 @@ create database minimark;
 ```
 
 7. 编写配置文件
-```shell
-cp config_sample.toml config.toml
-vim config.toml
-```
+    - Linux
+    ```shell
+    cp config_sample.toml config.toml
+    vim config.toml
+    ```
+    - Windows
+    ```shell
+    copy config_sample.toml config.toml
+    notepad config.toml
+    ```
 
 8. 运行
-```shell
-./minimark
-```
+
+   - Linux
+    ```shell
+    ./minimark
+    ```
+    - Windows的cmd终端
+    ```shell
+    minimark
+    ```
+    - Windows的PowerShell终端
+    ```shell
+    ./minimark.exe
+    ```
