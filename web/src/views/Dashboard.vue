@@ -3,6 +3,7 @@ import {ref} from "vue";
 import {goodsPageService} from "@/api/goods.js";
 import {categoryListService} from "@/api/category.js";
 import {orderPageService} from "@/api/order.js";
+import {monthRange, todayRange, weekRange, yearRange, yesterdayRange} from "@/utils/time-range.js";
 
 // 获取商品分类信息
 const categories = ref([])
@@ -62,7 +63,21 @@ const orderList = async () => {
         orders.value.push(item)
         totalSale.value += Number(item.totalPaid)
         const payTime = new Date(item.payTime)
-
+        if(payTime>=todayRange[0] && payTime <= todayRange[1]) {
+          todaySale.value += Number(item.totalPaid)
+        }
+        if(payTime>=yesterdayRange[0] && payTime<=yesterdayRange[1]) {
+          yesterdaySale.value += Number(item.totalPaid)
+        }
+        if(payTime>=weekRange[0] && payTime<=weekRange[1]) {
+          weekSale.value += Number(item.totalPaid)
+        }
+        if(payTime>=monthRange[0] && payTime<=monthRange[1]) {
+          monthSale.value += Number(item.totalPaid)
+        }
+        if(payTime>=yearRange[0] && payTime<=yearRange[1]) {
+          yearSale.value += Number(item.totalPaid)
+        }
       }
       if(result.data.items.length < data.pageSize) {
         break
