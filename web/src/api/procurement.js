@@ -17,15 +17,15 @@ export const procurementPageService = (data) => {
     if(data.payMethodId && data.payMethodId !== '') {
         uri += `&pay_method_id=${data.payMethodId}`
     }
-    if(data.purchaseTimeRange !== null && data.purchaseTimeRange.length > 0) {
+    if(data.purchaseTimeRange !== undefined && data.purchaseTimeRange !== null && data.purchaseTimeRange.length > 0) {
         uri += `&min_purchase_time=${moment(data.purchaseTimeRange[0]).format('YYYY-MM-DD HH:mm:ss')}`
         uri += `&max_purchase_time=${moment(data.purchaseTimeRange[1]).format('YYYY-MM-DD HH:mm:ss')}`
     }
-    if(data.payTimeRange !== null && data.payTimeRange.length > 0) {
+    if(data.payTimeRange !== undefined && data.payTimeRange !== null && data.payTimeRange.length > 0) {
         uri += `&min_pay_time=${moment(data.payTimeRange[0]).format('YYYY-MM-DD HH:mm:ss')}`
         uri += `&max_pay_time=${moment(data.payTimeRange[1]).format('YYYY-MM-DD HH:mm:ss')}`
     }
-    if(data.totalPayRange !== null && data.totalPayRange.length > 0) {
+    if(data.totalPayRange !== undefined && data.totalPayRange !== null && data.totalPayRange.length > 0) {
         uri += `&min_total_pay=${data.totalPayRange[0]}`
         uri += `&max_total_pay=${data.totalPayRange[1]}`
     }
