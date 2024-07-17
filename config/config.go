@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"github.com/pelletier/go-toml/v2"
 	"os"
 	"sync"
@@ -69,6 +70,26 @@ func GetConfig() *Config {
 		err = toml.Unmarshal(data, cfg)
 		if err != nil {
 			panic(err)
+		}
+
+		// 检查配置的正确性
+		// 检查http和https
+		httpOn := cfg.Server.Http.On
+		httpsOn := cfg.Server.Https.On
+		// 同时关闭
+		if !httpOn && !httpsOn {
+			panic(errors.New("http和https不能同时关闭"))
+		}
+		httpPort := cfg.Server.Http.Port
+		httpsPort := cfg.Server.Https.Port
+		// 端口相同
+		if httpOn && httpsOn && httpPort == httpsPort {
+			panic(errors.New("http和https不能监听同一个端口"))
+		}
+		httpRedirectHttps := cfg.Server.HttpRedirectHttps
+		// 开启重定向必须同时启用
+		if httpRedirectHttps && !(httpOn && httpsOn) {
+			panic(errors.New("开启http重定向https，必须同时启用http和https"))
 		}
 	})
 	return cfg
