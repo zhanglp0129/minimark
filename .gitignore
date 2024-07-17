@@ -1,5 +1,6 @@
 .idea
 config.toml
+ssl_certificate
 
 web/dist
 web/node_modules

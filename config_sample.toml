@@ -16,32 +16,17 @@ dsn = "admin:12345678@tcp(127.0.0.1:3306)/minimark?charset=utf8mb4&parseTime=Tru
 
 # 服务器相关配置
 [server]
+# 服务绑定的ip地址。0.0.0.0表示所有ip
+ip = "0.0.0.0"
+# 服务监听的端口
+port = 8092
 # 配置管理员用户，可以配置多个
 users = [
     {username="admin", password="12345678"},
     {username="root", password="123456789"}
 ]
-# 开启http重定向https，必须同时启用http和https
-http_redirect_https = false
-
-# 以下为http和https相关配置。
-# http和https是可以同时开启，不能同时关闭；http和https不能监听同一个端口。
-# http相关配置
-[server.http]
-# 是否启用http
-on = true
-# http服务绑定的ip地址。0.0.0.0表示所有ip
-ip = "0.0.0.0"
-# http服务监听的端口
-port = 8092
-# https相关配置
-[server.https]
 # 是否启用https
-on = false
-# https服务绑定的ip地址。0.0.0.0表示所有ip
-ip = "0.0.0.0"
-# https服务监听的端口
-port = 8093
+https = false
 # ssl证书文件路径
 certificate_file = ""
 # ssl私钥文件路径

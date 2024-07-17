@@ -39,7 +39,7 @@ func LoginAuthorization(c *gin.Context) {
 func GetRouters() *gin.Engine {
 	onceRouters.Do(func() {
 		routers = gin.Default()
-		// 提供嵌入的前端资源，并将访问前端资源的请求重定向到正确的未知
+		// 提供嵌入的前端资源，并将访问前端资源的请求重定向到正确的位置
 		routers.StaticFS("/static", http.FS(minimark.WebFS))
 		routers.GET("/assets/:filename", func(c *gin.Context) {
 			c.Redirect(301, "/static/web/dist/assets/"+c.Param("filename"))
