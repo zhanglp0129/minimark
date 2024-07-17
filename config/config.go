@@ -18,9 +18,24 @@ type DatabaseConfig struct {
 }
 
 type ServerConfig struct {
-	IP    string       `toml:"ip"`
-	Port  uint16       `toml:"port"`
-	Users []UserConfig `toml:"users"`
+	Users             []UserConfig      `toml:"users"`
+	HttpRedirectHttps bool              `toml:"http_redirect_https"`
+	Http              ServerHttpConfig  `toml:"http"`
+	Https             ServerHttpsConfig `toml:"https"`
+}
+
+type ServerHttpConfig struct {
+	On   bool   `toml:"on"`
+	IP   string `toml:"ip"`
+	Port uint16 `toml:"port"`
+}
+
+type ServerHttpsConfig struct {
+	On                 bool   `toml:"on"`
+	IP                 string `toml:"ip"`
+	Port               uint16 `toml:"port"`
+	CertificateFile    string `toml:"certificate_file"`
+	CertificateKeyFile string `toml:"certificate_key_file"`
 }
 
 type UserConfig struct {
@@ -29,15 +44,8 @@ type UserConfig struct {
 }
 
 type SecurityConfig struct {
-	JwtKey            string            `toml:"jwt_key"`
-	JwtExpire         int64             `toml:"jwt_expire"`
-	SecuritySSLConfig SecuritySSLConfig `toml:"ssl"`
-}
-
-type SecuritySSLConfig struct {
-	On                 bool   `toml:"on"`
-	CertificateFile    string `toml:"certificate_file"`
-	CertificateKeyFile string `toml:"certificate_key_file"`
+	JwtKey    string `toml:"jwt_key"`
+	JwtExpire int64  `toml:"jwt_expire"`
 }
 
 const (
