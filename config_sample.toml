@@ -30,3 +30,12 @@ users = [
 jwt_key = "qwertyasdfgh"
 # 登录信息过期时间，单位为秒
 jwt_expire = 86400
+
+# https相关配置
+[security.ssl]
+# 是否启用https
+on = false
+# SSL证书文件路径
+certificate_file = ""
+# SSL私钥文件路径
+certificate_key_file = ""

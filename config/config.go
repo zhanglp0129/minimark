@@ -29,8 +29,15 @@ type UserConfig struct {
 }
 
 type SecurityConfig struct {
-	JwtKey    string `toml:"jwt_key"`
-	JwtExpire int64  `toml:"jwt_expire"`
+	JwtKey            string            `toml:"jwt_key"`
+	JwtExpire         int64             `toml:"jwt_expire"`
+	SecuritySSLConfig SecuritySSLConfig `toml:"ssl"`
+}
+
+type SecuritySSLConfig struct {
+	On                 bool   `toml:"on"`
+	CertificateFile    string `toml:"certificate_file"`
+	CertificateKeyFile string `toml:"certificate_key_file"`
 }
 
 const (
