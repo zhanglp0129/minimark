@@ -196,7 +196,7 @@ orderList()
             <el-statistic :value="weekSale" :precision="2">
               <template #title>
                 <div style="display: inline-flex; align-items: center">
-                  近一周销售额
+                  近一周销售额(截至昨日)
                 </div>
               </template>
               <template #prefix>
@@ -211,7 +211,7 @@ orderList()
             <el-statistic :value="monthSale" :precision="2">
               <template #title>
                 <div style="display: inline-flex; align-items: center">
-                  近一月销售额
+                  近一月销售额(截至昨日)
                 </div>
               </template>
               <template #prefix>
@@ -226,7 +226,7 @@ orderList()
             <el-statistic :value="yearSale" :precision="2">
               <template #title>
                 <div style="display: inline-flex; align-items: center">
-                  近一年销售额
+                  近一年销售额(截至昨日)
                 </div>
               </template>
               <template #prefix>
